@@ -4,8 +4,9 @@ import 'package:mysql_client/mysql_client.dart';
 import '../components/custom_textformfield.dart';
 
 class PropertyRegisterScreen extends StatefulWidget {
-  const PropertyRegisterScreen({Key? key, required this.conn}) : super(key: key);
-
+   PropertyRegisterScreen({Key? key, required this.conn, required this.branchNo}) : super(key: key);
+  final List<String> list = ['House','Apartment', 'Condo'];
+  final String branchNo;
   final MySQLConnection conn;
 
   @override
@@ -24,12 +25,22 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
   String? managedBy;
   String? staffName;
   String? city;
+  String? dropdownValue;
+  String? branch;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     branch = widget.branchNo;
+
+    dropdownValue = widget.list.first;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register staff'),
+        title: const Text('Register Property'),
         elevation: 0,
       ),
       body: SafeArea(
@@ -55,16 +66,40 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                         }
                       },
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('Property type:'),
+                          DropdownButton(
+                              value: dropdownValue,
+                              items:widget.list.map((e){
+                                return DropdownMenuItem<String>(
+                                  child: Text(e.toString()),
+                                  value: e.toString(),
+                                );
+                              },
+                              ).toList(),
+                              onChanged:(String? value){
+                                setState(() {
+                                  dropdownValue = value;
+                                });
+                              }
+                          ),
+                        ],
+                      ),
+                    ),
                     CustomTextFormField(
-                      header: 'Property type',
+                      header: 'Property rooms.',
                       onSaved: (val) {
                         setState(() {
-                          propertyType = val;
+                          rooms = val;
                         });
                       },
                       validator: (val) {
                         if (val.isEmpty) {
-                          return 'Please enter the type of the property';
+                          return 'Please enter the no of rooms.';
                         }
                       },
                     ),
@@ -107,6 +142,7 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                         }
                       },
                     ),
+
                     CustomTextFormField(
                       header: 'Staff reg. no.',
                       onSaved: (val) {
@@ -128,7 +164,7 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                         });
                       },
                       validator: (val) {
-                        if (val.isEmpty) {
+                        if(val.isEmpty) {
                           return 'Please enter the staff\'s name';
                         }
                       },
@@ -197,6 +233,7 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                 ),
               ),
               Padding(
+
                 padding: const EdgeInsets.all(16.0),
                 child: SizedBox(
                   height: 50,
@@ -205,7 +242,7 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                     onPressed: () {
                       if(_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        print(city);
+                        widget.conn.execute("Insert into property () values('$propertyNo','$dropdownValue','$rooms','$rent', '$address', '$owner', '$branch','$managedBy', '$city', '$staffName')");
                       }
                     },
                     child: Text('Submit'),

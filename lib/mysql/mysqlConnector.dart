@@ -4,8 +4,8 @@ class MySQLConnector {
   static String host = '10.0.2.2';
   static int port = 3306;
   static String userName = 'root';
-  static String password = 'password@123';
-  static String db = 'bakery';
+  static String password = 'admin';
+  static String db = 'dreamhome';
 
   static Future<MySQLConnection> getConnection() async {
     final conn = await MySQLConnection.createConnection(
@@ -13,6 +13,7 @@ class MySQLConnector {
       port: port,
       userName: userName,
       password: password,
+      databaseName: db
     );
 
     await conn.connect();

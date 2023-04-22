@@ -79,7 +79,7 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Please enter the sex';
-                        } else if (val != 'M' || val != 'F') {
+                        } else if (val != 'M' && val != 'F') {
                           return 'Please input valid data';
                         }
                       },
@@ -154,7 +154,9 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                         });
                       },
                       validator: (val) {
-                        return null;
+
+                          return null;
+
                       },
                     ),
                     CustomTextFormField(
@@ -190,7 +192,9 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                         });
                       },
                       validator: (val) {
-                        return null;
+                        if(val.isEmpty) {
+                          return null;
+                        }
                       },
                     ),
                   ],
@@ -205,7 +209,7 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                     onPressed: () {
                       if(_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        print(fullName);
+                        widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch','$supervisor', '$managerStartDate', '$managerBonus')");
                       }
                     },
                     child: Text('Submit'),
