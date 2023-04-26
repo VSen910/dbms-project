@@ -110,7 +110,13 @@ class _PropertyOwnerRegistrationState extends State<PropertyOwnerRegistration> {
                       onSaved: (val) {
                         setState(
                           () {
-                            typeofBusiness = val;
+                            if(val.isEmpty){
+                              typeofBusiness = null;
+                            }
+                            else{
+                              typeofBusiness = val;
+
+                            }
                           },
                         );
                       },
@@ -171,7 +177,13 @@ class _PropertyOwnerRegistrationState extends State<PropertyOwnerRegistration> {
                           onPressed: () {
                             if(_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              widget.conn.execute("insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', '$typeofBusiness', '$contactName', '$dropdownValue')");
+                              if(typeofBusiness==null) {
+                                widget.conn.execute(
+                                    "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', null, '$contactName', '$dropdownValue')");
+                              }else{
+                                widget.conn.execute(
+                                    "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', '$typeofBusiness' ,'$contactName', '$dropdownValue')");
+                              }
                             }
                           },
                           child: Text('Submit'),

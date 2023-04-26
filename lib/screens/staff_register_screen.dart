@@ -150,7 +150,13 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                       header: 'Supervisor (if applicable)',
                       onSaved: (val) {
                         setState(() {
-                          supervisor = val;
+                          if(val.isEmpty){
+                            supervisor = null;
+                          }
+                          else {
+                            supervisor = val;
+                          }
+
                         });
                       },
                       validator: (val) {
@@ -163,8 +169,13 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                       header: 'Manager start date (if applicable)',
                       onSaved: (val) {
                         setState(() {
-                          managerStartDate = val;
-                        });
+                          if(val.isEmpty){
+                            managerStartDate = null;
+                          }
+                          else {
+                            managerStartDate = val;
+                          }
+                          });
                       },
                       validator: (val) {
                         if(val.isEmpty) {
@@ -188,7 +199,12 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                       textInputAction: TextInputAction.done,
                       onSaved: (val) {
                         setState(() {
-                          managerBonus = val;
+                          if(val.isEmpty) {
+                            managerBonus = null;
+                          }
+                          else{
+                            managerBonus = val;
+                          }
                         });
                       },
                       validator: (val) {
@@ -209,8 +225,12 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                     onPressed: () {
                       if(_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch','$supervisor', '$managerStartDate', '$managerBonus')");
+                        if(managerBonus == null && managerStartDate == null && supervisor==null)
+                          widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch', null, null, null)");
                       }
+                      else
+                        widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch','$supervisor', '$managerStartDate', '$managerBonus')");
+
                     },
                     child: Text('Submit'),
                   ),

@@ -15,17 +15,6 @@ class StaffListScreen extends StatefulWidget {
 class _StaffListScreenState extends State<StaffListScreen> {
 
   late DataTableSource _data;
-  //
-  // Future<List<List<String>>> _getTableInfo() async{
-  //  final results = await widget.conn.execute("select * from branch where branch_no = '$branch'");
-  //  List<List<String>> data = [];
-  //  for (var row in results) {
-  //    data.add(row);
-  //  }
-  //
-  //  return data;
-  //
-  // }
   @override
   void initState() {
     // TODO: implement initState
@@ -108,7 +97,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
                 _data = MyData(staffNo, fullName, sex, dob, position, salary, branch,supervisor,managerStartDate, managerBonus ,snapshot.data!.numOfRows);
                 return PaginatedDataTable(
-                  rowsPerPage: 5,
+                  rowsPerPage: 10,
                   columns: [
                     DataColumn(label: Text('Staff No')),
                     DataColumn(label: Text('Full Name')),
