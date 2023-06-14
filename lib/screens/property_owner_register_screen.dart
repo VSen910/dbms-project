@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mysql_client/exception.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 import '../components/custom_textformfield.dart';
@@ -174,15 +176,19 @@ class _PropertyOwnerRegistrationState extends State<PropertyOwnerRegistration> {
                         height: 50,
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if(_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              if(typeofBusiness==null) {
-                                widget.conn.execute(
-                                    "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', null, '$contactName', '$dropdownValue')");
-                              }else{
-                                widget.conn.execute(
-                                    "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', '$typeofBusiness' ,'$contactName', '$dropdownValue')");
+                              try {
+                                if (typeofBusiness == null) {
+                                  await widget.conn.execute(
+                                      "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', null, '$contactName', '$dropdownValue')");
+                                } else {
+                                  await widget.conn.execute(
+                                      "insert into property_owner values('$ownerNo', '$fullName', '$address', '$telNo', '$typeofBusiness' ,'$contactName', '$dropdownValue')");
+                                }
+                              }on MySQLServerException catch (e) {
+                                Fluttertoast.showToast(msg: 'Error');
                               }
                             }
                           },

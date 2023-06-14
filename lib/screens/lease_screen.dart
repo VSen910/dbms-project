@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:mysql_client/exception.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 import '../components/custom_textformfield.dart';
@@ -202,11 +204,17 @@ class _LeaseScreenState extends State<LeaseScreen> {
                         height: 50,
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async{
                             if(_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              widget.conn.execute("Insert into property () values('$propertyNo','$clientNo','$rentStart','$rentEnd', '$duration', '$monthlyRent', '$depositPaid','$dropdownValue')");
-
+                              try {
+                                await widget.conn.execute(
+                                    "Insert into lease (property_no, client_no, rent_start, rent_finish, duration, monthly_rent, deposit_paid, payment_method)"
+                                        "values('$propertyNo','$clientNo','$rentStart','$rentEnd', '$duration', '$monthlyRent', '$depositPaid','$dropdownValue')");
+                              }
+                              on MySQLServerException catch (e) {
+                                Fluttertoast.showToast(msg: 'Error');
+                              }
                             }
                           },
                           child: Text('Submit'),

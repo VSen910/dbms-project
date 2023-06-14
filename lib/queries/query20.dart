@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:mysql_client/mysql_client.dart';
 
-class Query25 extends StatefulWidget {
-  Query25({Key? key, required this.conn, required this.properties})
+class Query20 extends StatefulWidget {
+  Query20({Key? key, required this.conn})
       : super(key: key);
   final MySQLConnection conn;
 
-  final String properties;
+
   Future<List<String>>? tableData;
 
   @override
-  State<Query25> createState() => _Query25State();
+  State<Query20> createState() => _Query20State();
 }
 
-class _Query25State extends State<Query25> {
+class _Query20State extends State<Query20> {
 
   late DataTableSource _data;
   //
@@ -28,13 +28,16 @@ class _Query25State extends State<Query25> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Number of properties at all branches ' + widget.properties),
+        title: Text('Client Info'),
         elevation: 0,
       ),
       body: SafeArea(
         child: FutureBuilder(
           future: widget.conn
-              .execute(" SELECT property_type, COUNT(*) as total_properties FROM property GROUP BY property_type"),
+              .execute("select a.client_no as client_no, a.full_name as name from client a where exists( select *"
+              " from property p where a.max_rent<=p.property_rent and a.property_type = p.property_type and "
+              "a.client_no NOT IN (select client_no from lease) and p.property_no NOT IN(select property_no from lease)"
+              "  and a.registered_at = p.registered_at)"),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -47,27 +50,24 @@ class _Query25State extends State<Query25> {
                 child: Text('Error: ${snapshot.error}'),
               );
             } else {
-
-              late List<String> property_t = [];
-              late List<String> property_total = [];
-
+              late List<String> name=[];
+              late List<String> clientNo=[];
 
               for (int i = 0; i < snapshot.data!.numOfRows; i++) {
 
-                property_t.add(snapshot.data!.rows.elementAt(i).assoc()['property_type']!);
-                property_total.add(snapshot.data!.rows.elementAt(i).assoc()['total_properties']!);
+                name.add(snapshot.data!.rows.elementAt(i).assoc()['name']!);
+                clientNo.add(snapshot.data!.rows.elementAt(i).assoc()['client_no']!);
 
 
               }
-              _data = MyData(property_t,property_total,snapshot.data!.numOfRows);
+              _data = MyData(name, clientNo ,snapshot.data!.numOfRows);
               return Container(
                 child: PaginatedDataTable(
 
                   rowsPerPage: 10,
                   columns: [
-
-                    DataColumn(label: Text('Property Type'),),
-                    DataColumn(label: Text('Total_properties'),),
+                    DataColumn(label: Text('Client no'),),
+                    DataColumn(label: Text('Name'),),
 
                   ],
                   source: _data,
@@ -82,24 +82,25 @@ class _Query25State extends State<Query25> {
 }
 
 class MyData extends DataTableSource {
-  MyData(this.property_t,this.total_property,this.dataLength);
+  MyData(this.name,this.clientNo,
+      this.dataLength);
+  List<String>? name;
+  List<String>? clientNo;
 
-  List<String>? property_t;
-  List<String>? total_property;
+
   int dataLength;
+
 
   @override
   DataRow? getRow(int index) {
     return DataRow(
       cells: [
-
         DataCell(
-          Text(property_t![index]),
+          Text(clientNo![index]),
         ),
         DataCell(
-          Text(total_property![index]),
+          Text(name![index]),
         ),
-
 
 
       ],

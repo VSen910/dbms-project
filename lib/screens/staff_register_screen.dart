@@ -1,6 +1,8 @@
 import 'package:dbms_project/components/custom_textformfield.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:mysql_client/exception.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class StaffRegisterScreen extends StatefulWidget {
@@ -222,16 +224,25 @@ class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if(_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        if(managerBonus == null && managerStartDate == null && supervisor==null)
-                          widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch', null, null, null)");
+                    onPressed: () async{
+                      try {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          if (managerBonus == null &&
+                              managerStartDate == null && supervisor == null) {
+                            await widget.conn.execute(
+                                "Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch', null, null, null)");
+                          }
+                            else {
+                            await widget.conn.execute(
+                                "Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch','$supervisor', '$managerStartDate', '$managerBonus')");
+                            }
+                        }
+                      }on MySQLServerException catch (e) {
+                        Fluttertoast.showToast(msg: 'Error');
                       }
-                      else
-                        widget.conn.execute("Insert into staff () values('$staffNo','$fullName','$sex', '$dob', '$position', '$salary','$branch','$supervisor', '$managerStartDate', '$managerBonus')");
-
                     },
+
                     child: Text('Submit'),
                   ),
                 ),
