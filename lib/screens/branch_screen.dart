@@ -1,3 +1,4 @@
+import 'package:dbms_project/screens/branch_queries.dart';
 import 'package:dbms_project/screens/staff_queries.dart';
 import 'package:dbms_project/screens/registrations_screen.dart';
 import 'package:dbms_project/screens/viewing_report_screen.dart';
@@ -150,15 +151,32 @@ class _BranchScreenState extends State<BranchScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => BranchQueries(conn: widget.conn, branch_no: widget.branch_no,),
+                builder: (context) => StaffQueries(conn: widget.conn, branch_no: widget.branch_no,),
               ),
             );
           },
           child: Text(
-            'Branch Queries',
+            'Staff Queries',
           ),
         ),
-        )],
+        ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BranchQueries(conn: widget.conn, branch_no: widget.branch_no),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Branch Queries',
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

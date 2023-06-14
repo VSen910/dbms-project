@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mysql_client/exception.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 import '../components/custom_textformfield.dart';
@@ -239,11 +241,16 @@ class _PropertyRegisterScreenState extends State<PropertyRegisterScreen> {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
                       if(_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        widget.conn.execute("Insert into property () values('$propertyNo','$dropdownValue','$rooms','$rent', '$address', '$owner', '$branch','$managedBy', '$city', '$staffName')");
-                      }
+                        try {
+                         await widget.conn.execute(
+                              "Insert into property () values('$propertyNo','$dropdownValue','$rooms','$rent', '$address', '$owner', '$branch','$managedBy', '$city', '$staffName')");
+                        }on MySQLServerException catch (e) {
+                          Fluttertoast.showToast(msg: 'Error');
+                        }
+                        }
                     },
                     child: Text('Submit'),
                   ),

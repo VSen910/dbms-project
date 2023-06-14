@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mysql_client/mysql_client.dart';
 
-class Query5 extends StatefulWidget {
-  Query5(
+class Query16 extends StatefulWidget {
+  Query16(
       {Key? key,
-      required this.conn,
+        required this.conn,
       })
       : super(key: key);
   final MySQLConnection conn;
   Future<List<String>>? tableData;
 
   @override
-  State<Query5> createState() => _Query5State();
+  State<Query16> createState() => _Query16State();
 }
 
-class _Query5State extends State<Query5> {
+class _Query16State extends State<Query16> {
   late DataTableSource _data;
   //
 
@@ -35,9 +35,10 @@ class _Query5State extends State<Query5> {
         child: SingleChildScrollView(
           child: FutureBuilder(
             future: widget.conn.execute(
-                "select property_no, property_type, property_address "
-                    "from property where property_city = 'Glasgow' and registered_at = 'B003' and "
-                    "property_rent<450"),
+                "SELECT Property_no, Property_address, Property_type,"
+                    " Property_rent FROM Property "
+                    "WHERE Property_address LIKE '%Glasgow%'"
+                    " ORDER BY CAST(Property_rent AS SIGNED) ASC"),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -53,31 +54,40 @@ class _Query5State extends State<Query5> {
                 late List<String> property_no = [];
                 late List<String> property_type = [];
                 late List<String> property_address = [];
+                late List<String> property_rent = [];
+
 
 
                 for (int i = 0; i < snapshot.data!.numOfRows; i++) {
                   property_no.add(
-                      snapshot.data!.rows.elementAt(i).assoc()['property_no']!);
+                      snapshot.data!.rows.elementAt(i).assoc()['Property_no']!);
                   property_type.add(snapshot.data!.rows
                       .elementAt(i)
-                      .assoc()['property_type']!);
+                      .assoc()['Property_type']!);
 
                   property_address.add(snapshot.data!.rows
                       .elementAt(i)
-                      .assoc()['property_address']!);
+                      .assoc()['Property_address']!);
+
+                  property_rent.add(snapshot.data!.rows
+                      .elementAt(i)
+                      .assoc()['Property_rent']!);
                 }
 
                 _data = MyData(
                     property_no,
                     property_type,
                     property_address,
+                    property_rent,
                     snapshot.data!.numOfRows);
                 return PaginatedDataTable(
                   rowsPerPage: 10,
                   columns: [
                     DataColumn(label: Text('Property No')),
-                    DataColumn(label: Text('Property Type')),
                     DataColumn(label: Text('Property Address')),
+
+                    DataColumn(label: Text('Property Type')),
+                    DataColumn(label: Text('Property Rent')),
 
                   ],
                   source: _data,
@@ -97,7 +107,11 @@ class MyData extends DataTableSource {
       this.property_type,
 
       this.property_address,
+      this.property_rent,
       this.dataLength);
+
+  List<String> property_rent;
+
   List<String> property_no;
   List<String>? property_type;
 
@@ -113,12 +127,16 @@ class MyData extends DataTableSource {
           Text(property_no![index]),
         ),
         DataCell(
-          Text(property_type![index]),
-        ),
-
-        DataCell(
           Text(property_address![index]),
         ),
+        DataCell(
+          Text(property_type![index]),
+        ),
+        DataCell(
+          Text(property_rent![index]),
+        ),
+
+
 
       ],
     );

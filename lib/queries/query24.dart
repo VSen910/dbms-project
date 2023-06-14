@@ -34,7 +34,10 @@ class _Query24State extends State<Query24> {
       body: SafeArea(
         child: FutureBuilder(
           future: widget.conn
-              .execute("SELECT property.property_no, property.property_type, property.Property_address, property.property_rent, property_owner.full_name, property_owner.address, property_owner.tel_no FROM property JOIN property_owner ON property.property_owner = property_owner.owner_no JOIN branch ON property.registered_at = branch.branch_no WHERE branch.branch_no = '${widget.details}'"),
+              .execute("SELECT property.property_no, property.property_type, property.Property_address, property.property_rent,"
+              " property_owner.full_name, property_owner.address, property_owner.tel_no "
+              "FROM property JOIN property_owner ON property.property_owner = property_owner.owner_no "
+              "JOIN branch ON property.registered_at = branch.branch_no WHERE branch.branch_no = '${widget.details}'"),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -107,25 +110,25 @@ class MyData extends DataTableSource {
     return DataRow(
       cells: [
         DataCell(
+          Text(property_number![index]),
+        ),
+        DataCell(
+          Text(property_t![index]),
+        ),
+        DataCell(
+          Text(property_re![index]),
+        ),
+        DataCell(
+          Text(property_own_name![index]),
+        ),
+        DataCell(
           Text(property_own_tele![index]),
         ),
         DataCell(
           Text(property_own_add![index]),
         ),
         DataCell(
-          Text(property_own_name![index]),
-        ),
-        DataCell(
-          Text(property_re![index]),
-        ),
-        DataCell(
           Text(property_add![index]),
-        ),
-        DataCell(
-          Text(property_t![index]),
-        ),
-        DataCell(
-          Text(property_number![index]),
         ),
 
 

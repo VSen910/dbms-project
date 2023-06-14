@@ -43,8 +43,8 @@ class _RentedScreenState extends State<RentedScreen> {
         child: SingleChildScrollView(
           child: FutureBuilder(
             future: widget.conn
-                .execute("select * from property where registered_at = '${widget.branch}' "
-                "and property_no  IN (select property_no from lease)"),
+                .execute("SELECT * FROM property WHERE registered_at = '${widget.branch}' "
+                "AND property_no IN (SELECT property_no FROM lease WHERE rent_finish > DATE(NOW()))"),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(

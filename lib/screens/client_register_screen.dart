@@ -1,6 +1,8 @@
 import 'package:dbms_project/components/custom_textformfield.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:mysql_client/exception.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class ClientRegistration extends StatefulWidget {
@@ -196,11 +198,15 @@ class _ClientRegistrationState extends State<ClientRegistration> {
                           height: 50,
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if(_formKey.currentState!.validate()) {
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                widget.conn.execute("Insert into client () values('$clientNo','$fullName', '$dropdownValue', '$maxRent', '$registeredAt', '$registeredBy', '$dateRegistered','$telephoneNumber')");
-
+                                try {
+                                  await widget.conn.execute(
+                                      "Insert into client () values('$clientNo','$fullName', '$dropdownValue', '$maxRent', '$registeredAt', '$registeredBy', '$dateRegistered','$telephoneNumber')");
+                                } on MySQLServerException catch (e) {
+                                  Fluttertoast.showToast(msg: 'Error');
+                                }
                               }
                             },
                             child: Text('Submit'),

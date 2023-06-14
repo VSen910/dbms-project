@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mysql_client/mysql_client.dart';
 
-class ListingScreen extends StatefulWidget {
-  ListingScreen({Key? key, required this.conn, required this.branch})
+class Query19 extends StatefulWidget {
+  Query19({Key? key, required this.conn, required this.branch, required this.staffName})
       : super(key: key);
   final MySQLConnection conn;
-  final String branch;
+  final String? staffName;
+  final String? branch;
   Future<List<String>>? tableData;
 
   @override
-  State<ListingScreen> createState() => _ListingScreenState();
+  State<Query19> createState() => _Query19State();
 }
 
-class _ListingScreenState extends State<ListingScreen> {
+class _Query19State extends State<Query19> {
 
   late DataTableSource _data;
   //
-  // Future<List<List<String>>> _getTableInfo() async{
-  //  final results = await widget.conn.execute("select * from branch where branch_no = '$branch'");
-  //  List<List<String>> data = [];
-  //  for (var row in results) {
-  //    data.add(row);
-  //  }
-  //
-  //  return data;
-  //
-  // }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -36,15 +28,14 @@ class _ListingScreenState extends State<ListingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Property listing for ' + widget.branch),
+        title: Text('Staff List at branch ' + widget.branch.toString()),
         elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: FutureBuilder(
             future: widget.conn
-                .execute("select * from property where registered_at = '${widget.branch}' "
-                "and property_no NOT IN (select property_no from lease)"),
+                .execute("select * from property where registered_at = '${widget.branch}' and staff_name ='${widget.staffName}'"),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
